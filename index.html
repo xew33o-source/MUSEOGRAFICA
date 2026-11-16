@@ -1,0 +1,640 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<link rel="icon" href="data:,">
+<title>IA Museográfica – MVP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0f0d; --bg2:#0e1512; --panel:#121a16; --panel2:#16211b; --line:#24332a;
+  --ink:#edf2ee; --muted:#a9bab0; --faint:#7e9186;
+  --emerald:#2fd08c; --emerald-d:#17a76b; --gold:#d8b56b; --gold-ink:#1a1405;
+  --danger:#ff8a7a; --ok:#5eeaa0;
+  --radius:18px; --radius-s:12px;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light){
+  :root{ --bg:#f3f1ea; --bg2:#eceade; --panel:#ffffff; --panel2:#f7f5ee; --line:#ddd8c6;
+  --ink:#17211b; --muted:#4d5c53; --faint:#6b7a70; --emerald:#0e7a4e; --emerald-d:#0a5f3c; --gold:#8a6a1f; color-scheme:light; }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Archivo",system-ui,-apple-system,Segoe UI,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3,.serif{font-family:"Cormorant Garamond",Georgia,serif;line-height:1.05;margin:0}
+img{max-width:100%;display:block}
+button,input{font:inherit}
+button,[role="button"],input{min-height:44px}
+a{color:var(--emerald)}
+.wrap{max-width:1120px;margin:0 auto;padding:0 18px 64px}
+
+/* HERO */
+.hero{position:relative;margin:0 -18px;overflow:hidden;border-bottom:1px solid var(--line)}
+.hero img.heroimg{width:100%;height:52vh;min-height:340px;max-height:560px;object-fit:cover;object-position:center 30%;filter:saturate(.85)}
+.hero .veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,10,8,.22) 0%,rgba(6,10,8,.55) 52%,rgba(6,10,8,.94) 100%)}
+.hero .heroin{position:absolute;inset:auto 0 0 0;padding:28px 18px 22px;max-width:1120px;margin:0 auto;width:100%}
+.kicker{display:inline-flex;align-items:center;gap:8px;background:rgba(10,18,14,.82);border:1px solid rgba(47,208,140,.45);color:#bff5dc;padding:7px 12px;border-radius:999px;font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.kicker i{width:8px;height:8px;border-radius:50%;background:var(--emerald);display:inline-block}
+.hero h1{font-size:clamp(2.4rem,7vw,4.6rem);font-weight:700;color:#fff;max-width:14ch;margin-top:14px;text-shadow:0 2px 24px rgba(0,0,0,.5)}
+.hero p.lead{color:#dbe7df;max-width:58ch;font-size:clamp(1rem,2.4vw,1.2rem);margin:12px 0 0}
+.guide{display:flex;gap:14px;align-items:flex-start;background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--emerald);border-radius:var(--radius);padding:16px 18px;margin-top:22px}
+.guide .avatar{flex:0 0 52px;width:52px;height:52px;border-radius:50%;background:var(--emerald-d);color:#fff;display:grid;place-items:center;font-family:"Cormorant Garamond",serif;font-size:1.5rem;font-weight:700;border:2px solid var(--gold)}
+.guide p{margin:0}.guide strong{color:var(--emerald)}
+
+/* CREATOR */
+.creator{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:22px;margin-top:26px;box-shadow:0 18px 50px rgba(0,0,0,.25)}
+.creator h2{font-size:clamp(1.7rem,4vw,2.4rem)}
+.creator p.sub{color:var(--muted);margin:8px 0 18px;max-width:65ch}
+form.create{display:flex;gap:10px;flex-wrap:wrap}
+form.create input{flex:1 1 260px;background:var(--bg2);border:1.5px solid var(--line);border-radius:14px;color:var(--ink);padding:13px 16px;font-size:1.05rem}
+form.create input:focus{outline:2px solid var(--emerald);outline-offset:1px}
+.btn{border:0;border-radius:14px;padding:12px 20px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:9px;justify-content:center;text-decoration:none}
+.btn-primary{background:var(--emerald);color:#04150c}
+.btn-primary:hover{background:var(--emerald-d);color:#fff}
+.btn-ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.btn-gold{background:var(--gold);color:var(--gold-ink)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.chip{border:1.5px solid var(--line);background:var(--panel2);color:var(--ink);border-radius:999px;padding:9px 15px;cursor:pointer;font-weight:600;min-height:40px}
+.chip:hover{border-color:var(--emerald);color:var(--emerald)}
+.status{margin-top:14px;font-weight:700;color:var(--emerald);min-height:1.4em}
+
+/* MUSEUM */
+.museum{margin-top:38px}
+.mus-head{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;border-bottom:2px solid var(--line);padding-bottom:16px}
+.mus-head h2{font-size:clamp(2rem,5.5vw,3.4rem)}
+.mus-head .subt{color:var(--gold);font-weight:700;letter-spacing:.02em;margin-top:4px}
+.mus-head .intro{color:var(--muted);max-width:70ch;margin-top:10px}
+.meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.meta span{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:6px 12px;font-size:.85rem;font-weight:600;color:var(--muted)}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+section.block{margin-top:34px}
+section.block>h3{font-size:clamp(1.5rem,3.5vw,2.1rem);margin-bottom:6px}
+section.block>.desc{color:var(--muted);max-width:68ch;margin:0 0 16px}
+
+/* ROOMS */
+.roomtabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.roomtab{border:1.5px solid var(--line);background:var(--panel);color:var(--ink);border-radius:12px;padding:10px 14px;cursor:pointer;font-weight:700;text-align:left}
+.roomtab small{display:block;font-weight:500;color:var(--faint);font-size:.78rem}
+.roomtab[aria-selected="true"]{background:var(--emerald);color:#04150c;border-color:var(--emerald)}
+.roomtab[aria-selected="true"] small{color:#0a3d27}
+.room{display:grid;grid-template-columns:1fr;gap:0;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+@media(min-width:820px){.room{grid-template-columns:44% 56%}}
+.room figure{margin:0;position:relative;min-height:260px}
+.room figure img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.room figcaption{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(transparent,rgba(0,0,0,.85));color:#e7f5ec;padding:34px 16px 12px;font-size:.85rem}
+.ficha{padding:20px 22px 24px}
+.ficha .sala-no{color:var(--emerald);font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:.78rem}
+.ficha h4{font-family:"Cormorant Garamond",serif;font-size:1.9rem;margin:4px 0 2px;line-height:1.1}
+.ficha .obj{color:var(--gold);font-weight:700}
+dl.spec{display:grid;grid-template-columns:1fr;gap:0;margin:16px 0 0;border-top:1px solid var(--line)}
+@media(min-width:560px){dl.spec{grid-template-columns:150px 1fr}}
+dl.spec dt{font-weight:800;font-size:.82rem;text-transform:uppercase;letter-spacing:.05em;color:var(--faint);padding:11px 10px 11px 0;border-bottom:1px solid var(--line)}
+dl.spec dd{margin:0;padding:11px 0;border-bottom:1px solid var(--line)}
+.ficha .listen{margin-top:18px;display:flex;gap:8px;flex-wrap:wrap}
+
+/* CAPSULE */
+.capsule{background:#0d1f18;border:1px solid #1f4d38;border-radius:22px;padding:24px;color:#eaf7f0;position:relative;overflow:hidden}
+@media (prefers-color-scheme: light){.capsule{background:#103326}}
+.capsule:before{content:"";position:absolute;width:340px;height:340px;border-radius:50%;border:1.5px solid rgba(47,208,140,.35);right:-110px;top:-110px}
+.capsule:after{content:"";position:absolute;width:220px;height:220px;border-radius:50%;border:1.5px solid rgba(216,181,107,.35);right:-40px;top:-40px}
+.capsule .tag{color:var(--gold);font-weight:800;letter-spacing:.1em;text-transform:uppercase;font-size:.78rem}
+.capsule h3{font-size:clamp(1.7rem,4vw,2.5rem);margin:8px 0 10px;max-width:22ch}
+.capsule p{max-width:66ch;color:#cfe8da}
+.capsule .grid{display:grid;gap:12px;margin-top:18px;position:relative;z-index:1}
+@media(min-width:720px){.capsule .grid{grid-template-columns:repeat(3,1fr)}}
+.capsule .cell{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:14px}
+.capsule .cell b{display:block;color:var(--gold);font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
+
+/* TIMELINE */
+.timeline{display:grid;gap:0;margin-top:6px}
+.tl{display:grid;grid-template-columns:86px 22px 1fr;gap:0 10px}
+.tl .yr{font-family:"Cormorant Garamond",serif;font-size:1.5rem;font-weight:700;color:var(--emerald);text-align:right;padding-bottom:22px}
+.tl .dot{position:relative}
+.tl .dot:before{content:"";position:absolute;left:50%;top:8px;bottom:-4px;width:2px;background:var(--line);transform:translateX(-50%)}
+.tl .dot:after{content:"";position:absolute;left:50%;top:7px;width:13px;height:13px;border-radius:50%;background:var(--bg);border:3px solid var(--emerald);transform:translateX(-50%)}
+.tl:last-child .dot:before{display:none}
+.tl .ev{padding-bottom:22px}.tl .ev b{display:block}.tl .ev span{color:var(--muted)}
+
+/* QUIZ */
+.quiz{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px}
+.q{margin-bottom:22px}.q:last-of-type{margin-bottom:8px}
+.q p.qtext{font-weight:700;font-size:1.05rem;margin:0 0 10px}
+.opts{display:grid;gap:8px}
+@media(min-width:640px){.opts{grid-template-columns:1fr 1fr}}
+.opt{border:1.5px solid var(--line);background:var(--panel2);color:var(--ink);border-radius:12px;padding:12px 14px;cursor:pointer;text-align:left;font-weight:600}
+.opt.correct{border-color:var(--ok);background:rgba(46,160,100,.18)}
+.opt.wrong{border-color:var(--danger);background:rgba(200,70,50,.15)}
+.explain{display:none;margin-top:10px;color:var(--muted);border-left:3px solid var(--gold);padding:6px 0 6px 12px}
+.explain.show{display:block}
+.score{font-weight:800;color:var(--emerald);margin-top:10px;min-height:1.4em}
+
+/* HOW IT WORKS */
+.steps{display:grid;gap:12px}
+@media(min-width:820px){.steps{grid-template-columns:repeat(3,1fr)}}
+.step{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
+.step .num{width:42px;height:42px;border-radius:50%;background:var(--emerald);color:#04150c;display:grid;place-items:center;font-weight:800;font-size:1.15rem;margin-bottom:12px}
+.step h4{font-family:"Cormorant Garamond",serif;font-size:1.45rem;margin:0 0 6px}
+.step p{color:var(--muted);margin:0}
+.where{display:grid;gap:12px;margin-top:14px}
+@media(min-width:820px){.where{grid-template-columns:1fr 1fr}}
+.wcard{background:var(--panel2);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px}
+.wcard h4{margin:0 0 6px;font-size:1.05rem}
+.wcard h4 span{color:var(--emerald)}
+.wcard p{margin:0;color:var(--muted)}
+.wcard code{background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-size:.88em}
+.next{background:var(--panel);border:1.5px dashed var(--emerald-d);border-radius:var(--radius);padding:20px 22px;margin-top:14px}
+.next h4{font-family:"Cormorant Garamond",serif;font-size:1.5rem;margin:0 0 8px}
+.next ol{margin:0;padding-left:20px;color:var(--muted)}.next li{margin-bottom:6px}
+footer{border-top:1px solid var(--line);margin-top:48px;padding-top:20px;color:var(--faint);font-size:.92rem}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(80px);background:var(--emerald);color:#04150c;font-weight:800;padding:13px 20px;border-radius:999px;transition:transform .3s;z-index:50;max-width:92vw;text-align:center}
+.toast.show{transform:translateX(-50%) translateY(0)}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}.toast{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ENTRADA -->
+  <header class="hero">
+    <img class="heroimg" src="assets/img-01.jpg" alt="Queen en vivo: Freddie Mercury cantando, John Deacon al bajo y Brian May con su guitarra Red Special">
+    <div class="veil"></div>
+    <div class="heroin">
+      <span class="kicker"><i></i> MUDELAR · Museo de las Realidades</span>
+      <h1>Pide un tema. Entra a tu museo.</h1>
+      <p class="lead">Escribes una sola frase — «quiero un museo de Queen» — y la IA Museográfica arma el recorrido completo: salas, fichas museográficas, cápsula de tiempo, línea de tiempo, audioguía con voz y un quiz para aprender jugando.</p>
+    </div>
+  </header>
+
+  <div class="guide" role="note">
+    <div class="avatar" aria-hidden="true">CI</div>
+    <p><strong>Tu guía es Canon Iko.</strong> En MuseOS, Canon Iko —Canon E. Co., también Canónico— es el dueño del museo y quien presenta cada recorrido. Es la misma persona que Diego, el creador del sistema: un solo guía, no dos personajes. Él te recibe en cada museo y te lleva, sala por sala, hasta la Cápsula de Tiempo, el visor que muestra cómo se usaba cada objeto, dónde, en qué época y en qué momento se volvió histórico.</p>
+  </div>
+
+  <!-- CREADOR -->
+  <section class="creator" aria-labelledby="crea-t">
+    <h2 id="crea-t">Crea tu museo en una frase</h2>
+    <p class="sub">No necesitas saber de programación ni de museos. Escribe el tema como lo dirías en voz alta y pulsa el botón. Prueba con Queen, con Frida Kahlo, con la llegada a la Luna… o con lo que se te ocurra.</p>
+    <form class="create" id="createForm">
+      <label for="topic" class="sr" style="position:absolute;left:-9999px">Tema de tu museo</label>
+      <input id="topic" type="text" placeholder="Ej. Quiero un museo de Queen" autocomplete="off" value="Quiero un museo de Queen">
+      <button class="btn btn-primary" type="submit">🏛️ Crear mi museo</button>
+    </form>
+    <div class="chips" aria-label="Ejemplos rápidos">
+      <button class="chip" type="button" data-topic="Queen">Queen</button>
+      <button class="chip" type="button" data-topic="Frida Kahlo">Frida Kahlo</button>
+      <button class="chip" type="button" data-topic="La llegada a la Luna">La llegada a la Luna</button>
+      <button class="chip" type="button" data-topic="El vinilo y la música en casa">El vinilo</button>
+      <button class="chip" type="button" data-topic="Los volcanes de México">Los volcanes de México</button>
+    </div>
+    <p class="status" id="status" role="status" aria-live="polite"></p>
+  </section>
+
+  <!-- MUSEO GENERADO -->
+  <main class="museum" id="museum" aria-live="polite"></main>
+
+  <!-- CÓMO FUNCIONA -->
+  <section class="block" aria-labelledby="como-t">
+    <h3 id="como-t">Cómo funciona, sin tecnicismos</h3>
+    <p class="desc">Esto es lo que pasa por dentro cada vez que alguien pide un museo, explicado como se lo explicarías a un visitante:</p>
+    <div class="steps">
+      <div class="step"><div class="num">1</div><h4>Tú pides</h4><p>El visitante escribe una frase: «quiero un museo de Queen». Esa frase es la <b>petición</b>. En el mundo de la programación, pedirle algo a un sistema desde fuera se llama <b>hacer una llamada</b>.</p></div>
+      <div class="step"><div class="num">2</div><h4>El motor piensa</h4><p><b>MuseOS es el motor</b>: el código base que sabe cómo se construye un museo —qué salas lleva, cómo se escribe una ficha, cómo se narra la audioguía—. Recibe la petición y arma la experiencia completa.</p></div>
+      <div class="step"><div class="num">3</div><h4>El museo aparece</h4><p>El motor <b>responde</b> con el museo ya armado: salas, objetos con su ficha, cápsula de tiempo, línea de tiempo y quiz. La puerta por la que entran las peticiones y salen las respuestas es lo que los programadores llaman la <b>API</b>.</p></div>
+    </div>
+
+    <h3 style="margin-top:30px">Dónde vive cada cosa (tu duda, resuelta)</h3>
+    <p class="desc">Revisé tu repositorio <a href="https://github.com/xew33o-source/museOS" target="_blank" rel="noopener">xew33o-source/museOS</a> y esto es exactamente lo que hay:</p>
+    <div class="where">
+      <div class="wcard"><h4>📦 El código <span>— vive en GitHub</span></h4><p>Tu repo guarda las <b>instrucciones</b>: la app en <code>client/</code> (con la audioguía y la Cápsula de Tiempo), las acciones del servidor en <code>server/</code> y el molde de la base de datos en <code>drizzle/</code>. GitHub es la bodega del código, no el museo abierto al público.</p></div>
+      <div class="wcard"><h4>🗄️ Los datos <span>— NO se subieron</span></h4><p>Los recorridos y colecciones vivían en una base local llamada <code>app.db</code> que, como dice el propio README de tu repo, <b>no se sube a GitHub</b>. Las migraciones de <code>drizzle/</code> solo recrean el esquema <b>vacío</b>. Por eso hoy nadie puede «llamar» a tus museos guardados: no están en internet.</p></div>
+      <div class="wcard"><h4>▶️ La ejecución <span>— nacía dentro de Muse</span></h4><p>El código nació como un espacio de Muse y usa una pieza (<code>@hatch/space-sdk</code>) que solo existe dentro de Muse. Fuera de ahí no se instala tal cual: hay que adaptarla. Es decir, hoy MuseOS <b>no tiene una API pública encendida</b> a la que esta página pueda llamar.</p></div>
+      <div class="wcard"><h4>📱 Este MVP <span>— el motor, en tu teléfono</span></h4><p>Por eso este MVP trae la lógica del motor <b>dentro de la propia página</b>: pides un tema y el museo se genera al instante en tu dispositivo, sin servidor y sin costo. Queen, Frida y la Luna vienen curados a mano; cualquier otro tema se arma con la plantilla didáctica de MuseOS.</p></div>
+    </div>
+
+    <div class="next">
+      <h4>Qué falta para que sea la API «de verdad»</h4>
+      <ol>
+        <li><b>Encender MuseOS en un servidor público</b> (una computadora siempre prendida en internet) con la dependencia de Muse adaptada.</li>
+        <li><b>Abrir la puerta (la API):</b> una dirección del tipo «pide tu museo aquí» que reciba el tema y devuelva el museo armado.</li>
+        <li><b>Subir los datos:</b> migrar los recorridos de <code>app.db</code> a la base de datos de ese servidor.</li>
+        <li><b>Conectar esta app a esa dirección:</b> cuando eso exista, esta misma página cambia su motor interno por la llamada real a MuseOS, sin que el visitante note diferencia.</li>
+      </ol>
+    </div>
+  </section>
+
+  <footer>
+    <p>IA Museográfica – MVP · Motor museográfico inspirado en <a href="https://github.com/xew33o-source/museOS" target="_blank" rel="noopener">MuseOS — MUDELAR, Museo de las Realidades</a>, de Diego / Canon Iko. Fotografías: Queen en vivo (Kinorium), Freddie Mercury en Wembley, Brian May con la Red Special (NME), retrato pictórico de Frida Kahlo, astronauta del Apolo 11 (NASA) y tocadiscos de vinilo.</p>
+  </footer>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+"use strict";
+/* ============ DATOS CURADOS ============ */
+var MUSEUMS = {
+queen:{
+  key:"queen", title:"Museo de Queen", subtitle:"La banda que convirtió cada concierto en una catedral del rock",
+  hero:"assets/img-01.jpg", heroAlt:"Queen en vivo en los años setenta: Freddie Mercury, John Deacon y Brian May sobre el escenario",
+  intro:"Bienvenido. Soy Canon Iko y este es tu museo de Queen: cuatro músicos de Londres que mezclaron ópera, rock y teatro hasta llenar estadios enteros cantando con ellos. Recorrerás cinco salas: de un cartel pegado en 1970 a los 21 minutos que cambiaron la historia en el Live Aid.",
+  meta:["5 salas","5 fichas museográficas","1 Cápsula de Tiempo","Audioguía con voz","Quiz final"],
+  rooms:[
+    {name:"El origen", period:"1970 · Londres, Inglaterra", place:"Londres, Inglaterra", obj:"La formación original",
+     img:"assets/img-01.jpg", imgAlt:"Queen en sus primeros años de escenario, con Freddie Mercury al micrófono",
+     what:"Queen nace en 1970 cuando Freddie Mercury se une a Brian May y Roger Taylor; en 1971 llega el bajista John Deacon y la formación queda completa para siempre.",
+     why:"Es el punto de partida de una de las bandas más grandes del siglo XX: cuatro personalidades muy distintas que nunca cambiaron de integrantes en su etapa clásica.",
+     how:"Antes de la fama tocaron en clubes y universidades, ensayando armonías vocales de tres y cuatro voces que luego serían su sello: en Queen cantaban todos.",
+     cur:"El nombre «Queen» lo eligió Freddie: buscaba algo regio, teatral y fácil de recordar en un cartel.",
+     audio:"Sala uno, el origen. En 1970, en Londres, Freddie Mercury se une a Brian May y Roger Taylor. Un año después llega John Deacon al bajo, y la formación de Queen queda completa. Antes de llenar estadios, tocaron en clubes pequeños, construyendo el sello de la banda: armonías donde cantaban los cuatro."},
+    {name:"La guitarra hecha en casa", period:"1963–1964 · Londres", place:"Casa de la familia May, Londres", obj:"La Red Special, guitarra de Brian May",
+     img:"assets/img-02.jpg", imgAlt:"Brian May tocando en vivo su guitarra Red Special de color rojo cereza",
+     what:"La Red Special es la guitarra que Brian May construyó de adolescente junto a su padre Harold, ingeniero, porque no podían pagar una guitarra de marca.",
+     why:"Su sonido es inconfundible y acompaña casi toda la discografía de Queen. Demuestra la filosofía del museo: un objeto humilde puede volverse histórico.",
+     how:"Se construyó con madera de roble de una chimenea antigua, partes de una motocicleta y botones de nácar. Brian la toca con una moneda de seis peniques en lugar de púa, porque le da un ataque más preciso.",
+     cur:"La guitarra costó unas 8 libras de la época. Hoy es una de las más valiosas y reconocibles del mundo… y Brian sigue tocando la original.",
+     audio:"Sala dos, la guitarra hecha en casa. Brian May no pudo comprar una guitarra, así que la fabricó con su padre usando la madera de una chimenea vieja. La llamó Red Special. La toca con una moneda de seis peniques, y ese sonido casero terminó llenando los estadios más grandes del planeta."},
+    {name:"Bohemian Rhapsody", period:"1975 · Álbum «A Night at the Opera»", place:"Estudios de grabación, Reino Unido", obj:"La canción que nadie quiso acortar",
+     img:"assets/img-03.jpg", imgAlt:"Freddie Mercury frente a la multitud de un estadio, con chaqueta amarilla",
+     what:"«Bohemian Rhapsody» (1975) dura casi seis minutos y mezcla balada, ópera y rock duro en una sola pieza, algo que las radios de la época consideraban imposible de programar.",
+     why:"Estuvo nueve semanas en el número uno en Reino Unido y redefinió lo que una canción popular podía ser. Su videoclip ayudó a inventar el video musical moderno.",
+     how:"Se grabó por capas en varios estudios, con más de 180 pistas de voces superpuestas para lograr el coro de ópera. Freddie la llevó al piano casi terminada en su cabeza.",
+     cur:"La discográfica quería cortarla para la radio. La banda se negó… y la canción completa se volvió su mayor himno.",
+     audio:"Sala tres, Bohemian Rhapsody. En 1975 Queen grabó una canción de casi seis minutos que mezcla balada, ópera y rock. La discográfica quería cortarla. Se negaron. Estuvo nueve semanas en el número uno, y su video ayudó a inventar el videoclip moderno."},
+    {name:"Live Aid: 21 minutos eternos", period:"13 de julio de 1985 · Estadio de Wembley", place:"Estadio de Wembley, Londres", obj:"El micrófono sin base de Freddie",
+     img:"assets/img-04.jpg", imgAlt:"Freddie Mercury en Wembley, inclinado hacia atrás cantando con su micrófono",
+     what:"En el concierto benéfico Live Aid, Queen tocó solo 21 minutos ante unas 72,000 personas en Wembley y una audiencia televisiva mundial estimada en más de mil millones.",
+     why:"Esa actuación es considerada, una y otra vez, la mejor presentación en vivo de la historia del rock. Relanzó la carrera de la banda cuando muchos la daban por terminada.",
+     how:"Freddie usaba el micrófono montado en media asta, sin la base: lo convertía en cetro, espada y batuta para dirigir al estadio entero en su famoso juego de llamada y respuesta: «¡Eeeh-oh!».",
+     cur:"Queen no era el acto principal del cartel. Ensayaron su bloque como un solo medley sin pausas… y se robaron el día entero.",
+     audio:"Sala cuatro, Live Aid. El 13 de julio de 1985, Queen tuvo solo veintiún minutos en Wembley. Freddie, con su micrófono sin base como un cetro, dirigió a setenta y dos mil personas como un coro. Para muchos, es la mejor actuación en vivo de la historia del rock."},
+    {name:"El legado", period:"1991 – hoy", place:"Del estudio al mundo entero", obj:"Una corona que sigue sonando",
+     img:"assets/img-01.jpg", imgAlt:"Queen en vivo en blanco y negro, con el bombo de la batería con el nombre de la banda",
+     what:"Freddie Mercury murió el 24 de noviembre de 1991. Queen continuó con Brian May y Roger Taylor, y su música no ha dejado de sumar oyentes nuevos desde entonces.",
+     why:"«We Will Rock You», «We Are the Champions» y «Under Pressure» suenan en estadios deportivos de todo el planeta: Queen pasó de banda a lenguaje universal.",
+     how:"El legado se mantiene vivo en giras con vocalistas invitados, en el musical «We Will Rock You» y en la película «Bohemian Rhapsody» (2018), la biografía musical más taquillera de su época.",
+     cur:"Brian May, el guitarrista de la chimenea, es además doctor en astrofísica. La Red Special y el telescopio: el mismo cerebro.",
+     audio:"Sala cinco, el legado. Freddie Mercury murió en 1991, pero Queen nunca se fue. Sus canciones suenan en todos los estadios del mundo, y su guitarrista, Brian May, es además doctor en astrofísica. Gracias por recorrer este museo conmigo, soy Canon Iko."}
+  ],
+  capsule:{obj:"El micrófono sin base de Freddie Mercury", era:"Años setenta y ochenta", place:"Escenarios de todo el mundo, coronados en Wembley",
+    moment:"El juego de «¡Eeeh-oh!» con 72,000 personas en el Live Aid, 1985",
+    text:"Imagina la escena: Freddie desmonta la base del micrófono y se queda con media asta en la mano. No es un accidente: es su cetro. Con él apunta al cielo, marca el ritmo como un director de orquesta y convierte al público en el quinto integrante de Queen. La Cápsula de Tiempo te deja verlo exactamente así: el objeto, en su época, en el instante en que se volvió historia."},
+  timeline:[
+    {y:"1970", t:"Nace Queen", d:"Freddie Mercury se une a Brian May y Roger Taylor en Londres."},
+    {y:"1971", t:"Formación completa", d:"John Deacon llega al bajo. Los cuatro clásicos ya están juntos."},
+    {y:"1975", t:"Bohemian Rhapsody", d:"Sale «A Night at the Opera»: nueve semanas número uno en Reino Unido."},
+    {y:"1985", t:"Live Aid", d:"21 minutos en Wembley que relanzan a la banda ante el mundo."},
+    {y:"1991", t:"Adiós a Freddie", d:"Muere Freddie Mercury el 24 de noviembre. Queen y su obra continúan."},
+    {y:"2018", t:"La película", d:"«Bohemian Rhapsody» lleva la historia a una generación nueva."}
+  ],
+  quiz:[
+    {q:"¿Con qué toca Brian May su Red Special en lugar de una púa?", opts:["Una moneda de seis peniques","Un anillo de oro","Una llave","No usa nada, solo los dedos"], c:0, e:"Usa una moneda de seis peniques: le da un ataque más firme y preciso sobre las cuerdas."},
+    {q:"¿Cuánto duró la actuación de Queen en el Live Aid de 1985?", opts:["Dos horas","21 minutos","45 minutos","Toda la tarde"], c:1, e:"Solo 21 minutos, sin pausas entre canciones. Alcanzaron para hacer historia."},
+    {q:"¿De qué material humilde salió la madera de la Red Special?", opts:["De un barco hundido","De una puerta de iglesia","De una chimenea antigua","De un piano roto"], c:2, e:"Brian y su padre usaron el roble de una chimenea vieja de más de un siglo."}
+  ]
+},
+frida:{
+  key:"frida", title:"Museo de Frida Kahlo", subtitle:"Pintar el dolor hasta convertirlo en identidad de un país",
+  hero:"assets/img-05.jpg", heroAlt:"Retrato pictórico de Frida Kahlo con rebozo rosa, joyas prehispánicas y fondo de hojas azules y verdes",
+  intro:"Soy Canon Iko y te recibo en la Casa Azul sin salir de tu pantalla. Frida Kahlo (1907–1954) pintó su propia vida —el accidente, el cuerpo, México— en cuadros pequeños y enormes por dentro. Cinco salas para entender por qué el mundo entero reconoce su rostro.",
+  meta:["5 salas","5 fichas museográficas","1 Cápsula de Tiempo","Audioguía con voz","Quiz final"],
+  rooms:[
+    {name:"La Casa Azul", period:"1907 · Coyoacán, Ciudad de México", place:"Coyoacán, Ciudad de México", obj:"La casa donde nació y murió",
+     img:"assets/img-05.jpg", imgAlt:"Retrato pictórico de Frida Kahlo",
+     what:"Magdalena Carmen Frida Kahlo nació en 1907 en la Casa Azul de Coyoacán, la misma casa donde moriría en 1954 y que hoy es su museo.",
+     why:"Pocas artistas tienen un lugar tan unido a su obra: la casa es, literalmente, la primera y la última sala de su vida.",
+     how:"En sus patios crecen plantas prehispánicas y conviven piezas de arte popular mexicano que ella coleccionaba y que aparecen dentro de sus cuadros.",
+     cur:"Frida decía que nació con la Revolución Mexicana, en 1910. En realidad nació en 1907: se quitaba tres años por identidad, no por vanidad.",
+     audio:"Sala uno, la Casa Azul. Frida Kahlo nació en 1907 en Coyoacán, en la casa azul que hoy es su museo. Ahí mismo murió en 1954. Su vida y su obra empiezan y terminan entre esos muros."},
+    {name:"El accidente", period:"17 de septiembre de 1925", place:"Ciudad de México", obj:"El día que partió su vida en dos",
+     img:"assets/img-05.jpg", imgAlt:"Retrato pictórico de Frida Kahlo con fondo botánico",
+     what:"A los 18 años, el autobús en el que viajaba Frida fue embestido por un tranvía. Sufrió fracturas de columna, pelvis y pierna que la acompañaron con dolor y operaciones toda su vida.",
+     why:"Durante la larga convalecencia en cama empezó a pintar en serio. Su obra nace, literalmente, de estar inmóvil mirando un espejo sobre su cama.",
+     how:"Su madre mandó hacer un caballete especial para pintar acostada y colocó un espejo en el techo de su cama con dosel. Por eso el autorretrato es su género central.",
+     cur:"Pintó unos 55 autorretratos. Decía: «Me pinto a mí misma porque soy a quien mejor conozco».",
+     audio:"Sala dos, el accidente. A los dieciocho años, un tranvía chocó el autobús de Frida y le fracturó la columna. Convaleciente en cama, con un espejo sobre su cama, empezó a pintarse a sí misma. Así nació una de las obras más personales del arte moderno."},
+    {name:"Las dos Fridas", period:"1939", place:"Ciudad de México / París", obj:"Su cuadro más grande y famoso",
+     img:"assets/img-05.jpg", imgAlt:"Retrato pictórico de Frida Kahlo",
+     what:"«Las dos Fridas» (1939) muestra a dos versiones de ella misma tomándose de la mano: la Frida de tehuana y la Frida de vestido europeo, con los corazones expuestos y unidos por una vena.",
+     why:"Es su obra de mayor formato y la síntesis de su tema eterno: la identidad dividida entre México y Europa, entre el amor y la ruptura.",
+     how:"Lo pintó en el año de su divorcio de Diego Rivera y de su exposición en París, donde el Louvre compró una obra suya: fue el primer cuadro de una artista mexicana en entrar a ese museo.",
+     cur:"En París, Picasso le regaló unos aretes en forma de manos. Frida aparece con ellos en un autorretrato.",
+     audio:"Sala tres, Las dos Fridas. En 1939 pintó su cuadro más grande: dos Fridas de la mano, con los corazones a la vista. Ese mismo año expuso en París y el Louvre compró una obra suya, la primera de una artista mexicana en esa colección."},
+    {name:"El cuerpo como lienzo", period:"Toda su vida adulta", place:"Su estudio y su cama-taller", obj:"Corsés pintados y exvotos",
+     img:"assets/img-05.jpg", imgAlt:"Retrato pictórico de Frida Kahlo con joyas prehispánicas",
+     what:"Frida usó decenas de corsés ortopédicos de yeso y cuero. Lejos de esconderlos, los pintaba con martillos, flores y símbolos: convertía el aparato médico en obra de arte.",
+     why:"Es su lección central: el dolor no se niega, se trabaja. Su vestimenta tehuana también era una declaración de identidad mexicana y de fuerza.",
+     how:"Coleccionaba exvotos —pequeñas pinturas populares de agradecimiento— y adoptó su formato y su estilo directo para contar su propia historia en cuadros pequeños.",
+     cur:"Su último cuadro, terminado días antes de morir, es una naturaleza muerta de sandías con la frase «Viva la vida».",
+     audio:"Sala cuatro, el cuerpo como lienzo. Frida pintaba hasta sus corsés ortopédicos. No escondía el dolor: lo convertía en imagen. Su ropa de tehuana era también un manifiesto: México, identidad y fuerza."},
+    {name:"El legado", period:"1954 – hoy", place:"De Coyoacán al mundo", obj:"Un rostro universal",
+     img:"assets/img-05.jpg", imgAlt:"Retrato pictórico de Frida Kahlo",
+     what:"Frida murió en 1954 con reconocimiento aún modesto. Desde los años ochenta su figura explotó en el mundo: exposiciones multitudinarias, libros, cine y un movimiento entero, la «Fridamanía».",
+     why:"Su obra abrió camino para hablar del cuerpo, el dolor y la identidad en primera persona, algo que el arte de su época reservaba a otros temas.",
+     how:"La Casa Azul abrió como Museo Frida Kahlo en 1958, por voluntad de Diego Rivera, y es hoy uno de los museos más visitados de México.",
+     cur:"Su diario y su baño estuvieron cerrados por orden de Diego hasta 2004. Al abrirlos aparecieron miles de objetos personales.",
+     audio:"Sala cinco, el legado. Frida murió en 1954 casi en silencio. Décadas después, el mundo entero conoce su rostro. La Casa Azul, abierta como museo en 1958, recibe hoy visitantes de todo el planeta. Gracias por tu visita, soy Canon Iko."}
+  ],
+  capsule:{obj:"El espejo sobre la cama de Frida", era:"1925–1926, su convalecencia", place:"La Casa Azul, Coyoacán",
+    moment:"La primera vez que se pintó a sí misma, acostada, sin poder levantarse",
+    text:"La Cápsula de Tiempo se detiene en un objeto sencillo: un espejo colgado sobre una cama. Frida no podía ir al mundo, así que el mundo fue un rostro: el suyo. Desde ese espejo nacen decenas de autorretratos que hoy cuelgan en los museos más grandes del planeta."},
+  timeline:[
+    {y:"1907", t:"Nace en Coyoacán", d:"En la Casa Azul, el 6 de julio."},
+    {y:"1925", t:"El accidente", d:"Un tranvía embiste su autobús. Empieza a pintar en cama."},
+    {y:"1929", t:"Se casa con Diego Rivera", d:"Comienza una de las parejas más famosas del arte mexicano."},
+    {y:"1939", t:"París y Las dos Fridas", d:"Expone en París; el Louvre adquiere obra suya."},
+    {y:"1954", t:"Muere en la Casa Azul", d:"Su última frase escrita: «Espero que la salida sea alegre y espero no volver jamás»."},
+    {y:"1958", t:"Abre su museo", d:"La Casa Azul se inaugura como Museo Frida Kahlo."}
+  ],
+  quiz:[
+    {q:"¿Por qué Frida pintó tantos autorretratos?", opts:["Porque no le pagaban modelos","Porque pintaba en cama frente a un espejo","Porque estaba prohibido pintar paisajes","Porque solo vendía retratos"], c:1, e:"Convaleciente tras el accidente, pintaba acostada con un espejo sobre su cama: era su modelo disponible… y su tema."},
+    {q:"¿Qué museo compró una obra suya en 1939, algo inédito para una artista mexicana?", opts:["El Prado","El MoMA","El Louvre","El Reina Sofía"], c:2, e:"El Louvre, en París, adquirió «El marco» en 1939."},
+    {q:"¿Cuál fue su última obra, terminada días antes de morir?", opts:["Las dos Fridas","Una sandía con «Viva la vida»","La columna rota","Un retrato de Diego"], c:1, e:"Una naturaleza muerta de sandías firmada con la frase «Viva la vida», en 1954."}
+  ]
+},
+luna:{
+  key:"luna", title:"Museo de la Llegada a la Luna", subtitle:"El pequeño paso que dio toda la humanidad",
+  hero:"assets/img-06.jpg", heroAlt:"Astronauta del Apolo 11 sobre la superficie lunar, fotografía de la NASA",
+  intro:"Soy Canon Iko. El 20 de julio de 1969, dos personas caminaron sobre la Luna mientras una tercera las esperaba en órbita y cientos de millones miraban por televisión. Este museo recorre la misión Apolo 11 objeto por objeto, hasta pararnos junto a la huella más famosa de la historia.",
+  meta:["5 salas","5 fichas museográficas","1 Cápsula de Tiempo","Audioguía con voz","Quiz final"],
+  rooms:[
+    {name:"La promesa", period:"1961 · Estados Unidos", place:"Washington y Houston, EE. UU.", obj:"Llegar antes de que acabe la década",
+     img:"assets/img-06.jpg", imgAlt:"Astronauta sobre la Luna, fotografía de la NASA",
+     what:"En 1961 el presidente John F. Kennedy anunció la meta de llevar a un hombre a la Luna y traerlo de vuelta antes de que terminara la década, en plena carrera espacial con la Unión Soviética.",
+     why:"La promesa movilizó a unas 400,000 personas trabajando en el programa Apolo: el mayor esfuerzo tecnológico en tiempos de paz hasta entonces.",
+     how:"Todo era nuevo: cohetes gigantes, computadoras de a bordo, trajes que son naves en miniatura. Cada pieza de este museo nació para cumplir esa fecha límite.",
+     cur:"La computadora del Apolo tenía menos potencia que un reloj inteligente actual… y bastó.",
+     audio:"Sala uno, la promesa. En 1961, Kennedy prometió llegar a la Luna antes de que acabara la década. Cuatrocientas mil personas trabajaron para cumplirlo. Tenían ocho años."},
+    {name:"El despegue", period:"16 de julio de 1969 · Cabo Kennedy", place:"Plataforma 39A, Florida", obj:"El Saturno V, el cohete más potente",
+     img:"assets/img-06.jpg", imgAlt:"Astronauta del Apolo 11 en la superficie lunar",
+     what:"El 16 de julio de 1969, el Saturno V —110 metros de altura— despegó con Neil Armstrong, Buzz Aldrin y Michael Collins rumbo a la Luna, ante cerca de un millón de espectadores en Florida.",
+     why:"El Saturno V sigue siendo uno de los cohetes más potentes jamás lanzados con éxito. Sin él, no hay museo que contar.",
+     how:"Quemaba unas 20 toneladas de combustible por segundo en su primera etapa. En menos de 12 minutos, la tripulación ya estaba en órbita terrestre.",
+     cur:"Collins, el tercer astronauta, se quedaría solo en órbita lunar. Dijo que no se sentía solo: se sentía parte de la misión.",
+     audio:"Sala dos, el despegue. El 16 de julio de 1969, el Saturno V despegó con Armstrong, Aldrin y Collins. Medía ciento diez metros y quemaba veinte toneladas de combustible por segundo."},
+    {name:"El alunizaje", period:"20 de julio de 1969 · Mar de la Tranquilidad", place:"La superficie de la Luna", obj:"El módulo lunar «Eagle»",
+     img:"assets/img-06.jpg", imgAlt:"Astronauta junto al módulo lunar en la superficie de la Luna",
+     what:"El módulo lunar Eagle descendió con Armstrong pilotando a mano sobre un campo de rocas, con unos 25 segundos de combustible de margen. A las 20:17 UTC posó sus patas en el Mar de la Tranquilidad.",
+     why:"Es el momento central de la misión: por primera vez, una nave tripulada se posaba en otro mundo.",
+     how:"La frase que lo anunció al planeta fue serena: «Houston, aquí Base Tranquilidad. El Eagle ha alunizado». Horas después, Armstrong bajó la escalerilla.",
+     cur:"La computadora de a bordo lanzó alarmas durante el descenso. En Houston decidieron en segundos que no eran graves. Acertaron.",
+     audio:"Sala tres, el alunizaje. El 20 de julio de 1969, Armstrong pilotó el Eagle a mano, esquivando rocas, con segundos de combustible de sobra. Su mensaje: Houston, el Eagle ha alunizado."},
+    {name:"El pequeño paso", period:"20–21 de julio de 1969", place:"Junto al Eagle, la Luna", obj:"La huella y la frase",
+     img:"assets/img-06.jpg", imgAlt:"Huella y astronauta en el polvo lunar, fotografía de la NASA",
+     what:"Armstrong descendió y pronunció: «Es un pequeño paso para un hombre, pero un gran salto para la humanidad». Aldrin bajó después; juntos trabajaron unas dos horas y media sobre la superficie.",
+     why:"Unos 600 millones de personas lo vieron en directo: fue el acontecimiento televisivo global de su siglo.",
+     how:"Sin viento ni lluvia en la Luna, las huellas de sus botas seguirán ahí durante millones de años. Recogieron 21.5 kilos de rocas lunares.",
+     cur:"La foto más famosa de un astronauta en la Luna muestra a Aldrin… fotografiado por Armstrong, que se refleja en su visor dorado.",
+     audio:"Sala cuatro, el pequeño paso. Armstrong bajó a la superficie y dijo la frase más famosa del siglo veinte. Sin viento en la Luna, su huella seguirá ahí millones de años."},
+    {name:"El regreso y el legado", period:"24 de julio de 1969 – hoy", place:"Océano Pacífico / el mundo", obj:"La cápsula que volvió",
+     img:"assets/img-06.jpg", imgAlt:"Astronauta del Apolo 11 sobre el regolito lunar",
+     what:"El 24 de julio de 1969, la cápsula Columbia amerizó en el Pacífico con los tres astronautas a salvo. La promesa de 1961 se había cumplido con meses de sobra.",
+     why:"Apolo 11 demostró que un objetivo enorme, dividido en sistemas que funcionan paso a paso, se puede lograr. Doce personas han caminado sobre la Luna; ninguna desde 1972.",
+     how:"El legado vive en tecnología cotidiana —de los materiales aislantes a la fotografía digital— y en cada programa espacial actual que vuelve a apuntar a la Luna.",
+     cur:"Los astronautas firmaron formularios de aduana al volver: declararon «rocas lunares» y, en broma oficial, enfermedades «por determinar».",
+     audio:"Sala cinco, el regreso. El 24 de julio, la cápsula cayó en el Pacífico con los tres a salvo. La promesa se cumplió. Gracias por visitar este museo conmigo, soy Canon Iko."}
+  ],
+  capsule:{obj:"La huella de la bota de Armstrong", era:"20 de julio de 1969, 02:56 UTC", place:"Mar de la Tranquilidad, la Luna",
+    moment:"El primer contacto de un pie humano con otro mundo",
+    text:"La Cápsula de Tiempo se abre sobre el polvo lunar. La bota se hunde un centímetro en el regolito, Armstrong comprueba que el suelo sostiene su peso… y da el paso. En la Tierra, 600 millones de personas contienen la respiración al mismo tiempo. Ese instante es exactamente lo que esta cápsula guarda: el objeto, el lugar y el segundo en que se volvió eterno."},
+  timeline:[
+    {y:"1961", t:"La promesa de Kennedy", d:"Meta: llegar a la Luna antes de fin de la década."},
+    {y:"1969 · 16 jul", t:"Despegue", d:"El Saturno V sale de Cabo Kennedy con tres astronautas."},
+    {y:"1969 · 20 jul", t:"Alunizaje", d:"El Eagle se posa en el Mar de la Tranquilidad."},
+    {y:"1969 · 21 jul", t:"El pequeño paso", d:"Armstrong y Aldrin caminan sobre la Luna."},
+    {y:"1969 · 24 jul", t:"Regreso", d:"Amerizaje en el Pacífico. Misión cumplida."},
+    {y:"1972", t:"El último Apolo", d:"Apolo 17: hasta hoy, la última vez que alguien pisó la Luna."}
+  ],
+  quiz:[
+    {q:"¿Quién se quedó en órbita mientras Armstrong y Aldrin bajaban a la Luna?", opts:["Yuri Gagarin","Michael Collins","John Glenn","Nadie, bajaron los tres"], c:1, e:"Michael Collins esperó solo en el módulo de mando Columbia, en órbita lunar."},
+    {q:"¿Con cuánto combustible de margen alunizó el Eagle?", opts:["Dos horas","Medio tanque","Unos 25 segundos","Llegó en reserva total"], c:2, e:"Unos 25 segundos de margen: Armstrong buscaba un sitio seguro entre las rocas."},
+    {q:"¿Por qué las huellas siguen en la Luna?", opts:["Están protegidas por una cúpula","No hay viento ni lluvia que las borre","Las restauran robots","Es una leyenda, ya no están"], c:1, e:"La Luna no tiene atmósfera ni agua: sin erosión, las huellas duran millones de años."}
+  ]
+}
+};
+
+/* ============ MOTOR GENÉRICO (plantilla MuseOS) ============ */
+function buildGeneric(raw){
+  var topic = raw.replace(/quiero un museo de|quiero un museo sobre|museo de|museo sobre/gi,"").trim();
+  if(!topic) topic = raw.trim();
+  topic = topic.charAt(0).toUpperCase()+topic.slice(1);
+  var T = topic;
+  return {
+    key:"generic", title:"Museo de "+T, subtitle:"Recorrido didáctico generado al momento con la plantilla de MuseOS",
+    hero:"assets/img-07.jpg", heroAlt:"Un tocadiscos de vinilo: cada museo guarda objetos que cuentan una época",
+    intro:"Soy Canon Iko. Acabas de pedir un museo de "+T+" y el motor de MuseOS lo ha armado con su estructura clásica: cinco salas que van del origen al legado, cada una con su ficha museográfica y su audioguía. Es un borrador didáctico generado al momento: la estructura es la del museo real, y los datos concretos de cada tema se curan después, como se hizo a mano con Queen, Frida Kahlo y la Luna.",
+    meta:["5 salas","Plantilla MuseOS","1 Cápsula de Tiempo","Audioguía con voz","Quiz final"],
+    rooms:[
+      {name:"Los orígenes", period:"Sala 1 · El punto de partida", place:"Donde todo comenzó", obj:"La primera pieza del recorrido",
+       img:"assets/img-07.jpg", imgAlt:"Tocadiscos vintage: un objeto cotidiano convertido en pieza de museo",
+       what:"Toda historia de "+T+" tiene un primer día, una primera persona o un primer objeto. Esta sala lo busca y lo pone bajo la luz: sin origen claro, ningún museo se sostiene.",
+       why:"Entender el origen explica todo lo demás: las decisiones, los errores y el momento en que "+T+" dejó de ser una idea para volverse realidad.",
+       how:"En la curaduría completa, aquí va el objeto fundacional con su fecha y su lugar exactos, verificados. Pregunta guía de la sala: ¿qué tuvo que pasar para que esto existiera?",
+       cur:"En MuseOS, cada sala responde una sola pregunta. La de esta sala es: ¿cómo empezó todo?",
+       audio:"Sala uno, los orígenes de "+T+". Todo museo empieza con una pregunta: cómo empezó todo. Aquí colocamos el primer objeto, la primera fecha y la primera persona de esta historia."},
+      {name:"El desarrollo", period:"Sala 2 · El crecimiento", place:"El contexto de su época", obj:"Las piezas que lo hicieron crecer",
+       img:"assets/img-07.jpg", imgAlt:"Detalle de un vinilo girando en un tocadiscos",
+       what:"Nada crece solo. Esta sala reúne a las personas, las herramientas y las circunstancias que empujaron a "+T+" desde su origen hasta su momento de mayor fuerza.",
+       why:"Aquí el visitante entiende la cadena completa: cada avance de "+T+" fue posible porque algo —o alguien— lo hizo posible justo antes.",
+       how:"La ficha completa de esta sala documenta el «cómo se usaba» de cada pieza: en MuseOS no basta con mirar el objeto, hay que verlo funcionando en su época.",
+       cur:"La regla de oro de la casa: un objeto sin su historia de uso es solo un adorno. Con su historia, es una lección.",
+       audio:"Sala dos, el desarrollo. Nada crece solo: en esta sala están las personas y las herramientas que empujaron a "+T+" hasta su mejor momento."},
+      {name:"El momento histórico", period:"Sala 3 · El instante decisivo", place:"El lugar exacto del momento", obj:"La pieza del gran día",
+       img:"assets/img-07.jpg", imgAlt:"Tocadiscos de maleta abierto, listo para sonar",
+       what:"Todo tema tiene un instante en el que se vuelve histórico: un día, una escena, una decisión. Esta sala lo aísla y lo cuenta en cámara lenta.",
+       why:"Es la sala que el visitante recordará al salir. En la estructura de MuseOS, este momento es el que luego se revive dentro de la Cápsula de Tiempo.",
+       how:"La curaduría completa fija aquí la fecha exacta y el lugar exacto, con fuentes. La pregunta guía: ¿qué cambió para siempre en ese instante?",
+       cur:"Si solo pudieras contar una escena de "+T+" a alguien que no sabe nada, sería la de esta sala.",
+       audio:"Sala tres, el momento histórico. Todo tema tiene un instante que lo cambia todo. Esta es la escena central de "+T+", la que se revive en la Cápsula de Tiempo."},
+      {name:"Las personas y los objetos", period:"Sala 4 · Los protagonistas", place:"Escenarios de la historia", obj:"Retratos y herramientas clave",
+       img:"assets/img-07.jpg", imgAlt:"Vinilo sobre el plato de un tocadiscos antiguo",
+       what:"Detrás de "+T+" hay rostros. Esta sala presenta a sus protagonistas y a los objetos que los acompañaron, cada uno con su ficha museográfica completa.",
+       why:"Los museos no guardan cosas: guardan personas a través de las cosas. Conocer a los protagonistas convierte datos en memoria.",
+       how:"Cada ficha sigue el formato de la casa: qué es, de qué época, dónde se usaba, cómo se usaba y por qué importa hoy.",
+       cur:"Canon Iko, tu guía, aparece en la versión cinematográfica de MuseOS interactuando con estos objetos dentro de la Cápsula.",
+       audio:"Sala cuatro, las personas y los objetos. Los museos guardan personas a través de las cosas. Aquí están los protagonistas de "+T+" y las piezas que los acompañaron."},
+      {name:"El legado", period:"Sala 5 · Lo que queda hoy", place:"El presente", obj:"La huella en la actualidad",
+       img:"assets/img-07.jpg", imgAlt:"Tocadiscos en una habitación cálida, símbolo de un legado vivo",
+       what:"La última sala responde para qué sirve todo lo anterior: qué dejó "+T+" en el mundo de hoy y por qué sigue importando a quien entra a este museo.",
+       why:"Un museo que no conecta con el presente es un almacén. El legado es el puente entre la historia de "+T+" y la vida del visitante.",
+       how:"Aquí se cierra el recorrido con la audioguía final de Canon Iko y el quiz: tres preguntas para comprobar que el museo enseñó algo de verdad.",
+       cur:"Al salir, el visitante debería poder contar la historia de "+T+" en un minuto. Esa es la prueba de fuego de MuseOS.",
+       audio:"Sala cinco, el legado. Cerramos el recorrido: qué dejó "+T+" en el mundo de hoy. Gracias por visitar tu museo conmigo, soy Canon Iko."}
+    ],
+    capsule:{obj:"La pieza central de "+T, era:"Su época decisiva", place:"El lugar de su momento histórico",
+      moment:"El instante en que "+T+" se volvió historia",
+      text:"La Cápsula de Tiempo de MuseOS es un visor que revive un objeto exactamente como se usaba: dónde, en qué época y en el momento que lo hizo histórico, de la mano de Canon Iko. Para este museo generado al momento, la cápsula queda preparada con su escena central; al curar el tema a mano —como Queen, Frida o la Luna— la escena se escribe con su fecha y su lugar reales."},
+    timeline:[
+      {y:"Sala 1", t:"El origen", d:"El primer día de la historia de "+T+"."},
+      {y:"Sala 2", t:"El desarrollo", d:"Las personas y herramientas que lo hicieron crecer."},
+      {y:"Sala 3", t:"El momento histórico", d:"El instante que lo cambió todo."},
+      {y:"Sala 4", t:"Los protagonistas", d:"Rostros y objetos con su ficha completa."},
+      {y:"Sala 5", t:"El legado", d:"Lo que "+T+" significa hoy."}
+    ],
+    quiz:[
+      {q:"¿Cuál es la estructura de salas de un museo MuseOS?", opts:["Solo una sala grande","Origen, desarrollo, momento histórico, protagonistas y legado","Orden alfabético","Al azar, cada visita cambia"], c:1, e:"La plantilla de la casa recorre siempre: origen → desarrollo → momento histórico → protagonistas → legado."},
+      {q:"¿Qué hace la Cápsula de Tiempo?", opts:["Vende boletos","Muestra cómo se usaba un objeto, dónde, en qué época y en su momento histórico","Guarda objetos bajo llave","Traduce el museo a otros idiomas"], c:1, e:"Es el visor de MuseOS: revive el objeto en su contexto y en su instante decisivo, guiado por Canon Iko."},
+      {q:"¿Qué contiene una ficha museográfica de MuseOS?", opts:["Solo el nombre del objeto","Qué es, época, lugar, cómo se usaba y por qué importa","El precio del objeto","Solo una foto bonita"], c:1, e:"La ficha completa responde: qué es, de cuándo, de dónde, cómo se usaba y por qué importa hoy."}
+    ]
+  };
+}
+
+/* ============ RENDER ============ */
+var museumEl = document.getElementById("museum");
+var statusEl = document.getElementById("status");
+var current = null, currentRoom = 0, quizState = {};
+
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;"); }
+
+function renderMuseum(m){
+  current = m; currentRoom = 0; quizState = {};
+  var html = "";
+  html += '<div class="mus-head"><div><h2>'+esc(m.title)+'</h2><div class="subt">'+esc(m.subtitle)+'</div>'
+        + '<p class="intro">'+esc(m.intro)+'</p><div class="meta">'+ m.meta.map(function(x){return "<span>"+esc(x)+"</span>";}).join("") +'</div></div>'
+        + '<div class="actions"><button class="btn btn-gold" id="btnFullAudio" type="button">🔊 Escuchar recorrido completo</button>'
+        + '<button class="btn btn-ghost" id="btnStop" type="button">⏹ Detener voz</button>'
+        + '<button class="btn btn-ghost" id="btnDownload" type="button">⬇ Descargar fichas (.txt)</button></div></div>';
+
+  /* SALAS */
+  html += '<section class="block"><h3>Las salas</h3><p class="desc">Toca cada sala para abrir su ficha museográfica completa. En cada una puedes escuchar su audioguía con la voz de tu dispositivo.</p><div class="roomtabs" role="tablist">';
+  m.rooms.forEach(function(r,i){ html += '<button class="roomtab" role="tab" data-room="'+i+'" aria-selected="'+(i===0)+'">Sala '+(i+1)+'<small>'+esc(r.name)+'</small></button>'; });
+  html += '</div><div id="roomBox"></div></section>';
+
+  /* CAPSULA */
+  var c = m.capsule;
+  html += '<section class="block"><div class="capsule"><span class="tag">⏳ Cápsula de Tiempo · MuseOS</span><h3>'+esc(c.obj)+'</h3><p>'+esc(c.text)+'</p>'
+        + '<div class="grid"><div class="cell"><b>Época</b>'+esc(c.era)+'</div><div class="cell"><b>Lugar</b>'+esc(c.place)+'</div><div class="cell"><b>El momento</b>'+esc(c.moment)+'</div></div>'
+        + '<div style="margin-top:18px;position:relative;z-index:1"><button class="btn btn-gold" id="btnCapsule" type="button">🔊 Escuchar la cápsula</button></div></div></section>';
+
+  /* TIMELINE */
+  html += '<section class="block"><h3>Línea de tiempo</h3><p class="desc">La historia completa de un vistazo, como el muro cronológico a la salida del museo.</p><div class="timeline">';
+  m.timeline.forEach(function(t){ html += '<div class="tl"><div class="yr">'+esc(t.y)+'</div><div class="dot"></div><div class="ev"><b>'+esc(t.t)+'</b><span>'+esc(t.d)+'</span></div></div>'; });
+  html += '</div></section>';
+
+  /* QUIZ */
+  html += '<section class="block"><h3>Quiz de salida</h3><p class="desc">Un museo didáctico se comprueba: tres preguntas sobre lo que acabas de recorrer.</p><div class="quiz" id="quiz">';
+  m.quiz.forEach(function(q,qi){
+    html += '<div class="q"><p class="qtext">'+(qi+1)+'. '+esc(q.q)+'</p><div class="opts">';
+    q.opts.forEach(function(o,oi){ html += '<button class="opt" type="button" data-q="'+qi+'" data-o="'+oi+'">'+esc(o)+'</button>'; });
+    html += '</div><div class="explain" id="ex-'+qi+'">'+esc(q.e)+'</div></div>';
+  });
+  html += '<p class="score" id="score"></p></div></section>';
+
+  museumEl.innerHTML = html;
+  renderRoom();
+
+  museumEl.querySelectorAll(".roomtab").forEach(function(b){
+    b.addEventListener("click", function(){ currentRoom = parseInt(b.getAttribute("data-room"),10); stopVoice(); renderRoom();
+      museumEl.querySelectorAll(".roomtab").forEach(function(x){ x.setAttribute("aria-selected", x===b ? "true":"false"); }); });
+  });
+  document.getElementById("btnFullAudio").addEventListener("click", function(){
+    var texts = [m.intro].concat(m.rooms.map(function(r){return r.audio;}));
+    speak(texts.join(" "));
+  });
+  document.getElementById("btnStop").addEventListener("click", stopVoice);
+  document.getElementById("btnCapsule").addEventListener("click", function(){ speak(c.text); });
+  document.getElementById("btnDownload").addEventListener("click", downloadFichas);
+  museumEl.querySelectorAll(".opt").forEach(function(b){ b.addEventListener("click", answerQuiz); });
+}
+
+function renderRoom(){
+  var r = current.rooms[currentRoom];
+  var box = document.getElementById("roomBox");
+  box.innerHTML =
+    '<article class="room"><figure><img src="'+r.img+'" alt="'+esc(r.imgAlt)+'"><figcaption>Pieza central · '+esc(r.obj)+'</figcaption></figure>'
+    + '<div class="ficha"><span class="sala-no">Sala '+(currentRoom+1)+' de '+current.rooms.length+'</span><h4>'+esc(r.name)+'</h4><div class="obj">'+esc(r.obj)+'</div>'
+    + '<dl class="spec">'
+    + '<dt>Qué es</dt><dd>'+esc(r.what)+'</dd>'
+    + '<dt>Época</dt><dd>'+esc(r.period)+'</dd>'
+    + '<dt>Lugar</dt><dd>'+esc(r.place)+'</dd>'
+    + '<dt>Por qué importa</dt><dd>'+esc(r.why)+'</dd>'
+    + '<dt>Cómo se usaba</dt><dd>'+esc(r.how)+'</dd>'
+    + '<dt>Dato curioso</dt><dd>'+esc(r.cur)+'</dd>'
+    + '</dl><div class="listen"><button class="btn btn-primary" id="btnRoomAudio" type="button">🔊 Escuchar audioguía de esta sala</button></div></div></article>';
+  document.getElementById("btnRoomAudio").addEventListener("click", function(){ speak(r.audio); });
+}
+
+/* ============ VOZ (audioguía) ============ */
+function speak(text){
+  if(!("speechSynthesis" in window)){ toast("Tu dispositivo no tiene voz automática. Puedes leer la audioguía en cada ficha."); return; }
+  window.speechSynthesis.cancel();
+  var u = new SpeechSynthesisUtterance(text);
+  u.lang = "es-MX"; u.rate = 0.98;
+  var voices = window.speechSynthesis.getVoices();
+  for(var i=0;i<voices.length;i++){ if(/^es/i.test(voices[i].lang)){ u.voice = voices[i]; u.lang = voices[i].lang; break; } }
+  window.speechSynthesis.speak(u);
+  toast("🔊 Audioguía sonando… usa «Detener voz» cuando quieras parar.");
+}
+function stopVoice(){ if("speechSynthesis" in window) window.speechSynthesis.cancel(); }
+if("speechSynthesis" in window){ window.speechSynthesis.onvoiceschanged = function(){}; }
+
+/* ============ QUIZ ============ */
+function answerQuiz(ev){
+  var b = ev.currentTarget, qi = parseInt(b.getAttribute("data-q"),10), oi = parseInt(b.getAttribute("data-o"),10);
+  if(quizState[qi] !== undefined) return;
+  var q = current.quiz[qi]; quizState[qi] = (oi === q.c);
+  var parent = b.closest(".q");
+  parent.querySelectorAll(".opt").forEach(function(x,xi){ if(xi===q.c) x.classList.add("correct"); else if(x===b) x.classList.add("wrong"); x.disabled = true; });
+  document.getElementById("ex-"+qi).classList.add("show");
+  var done = Object.keys(quizState).length, right = Object.values(quizState).filter(Boolean).length;
+  var s = document.getElementById("score");
+  if(done === current.quiz.length){ s.textContent = "Resultado: "+right+" de "+current.quiz.length+(right===current.quiz.length ? " · ¡Recorrido perfecto! Canon Iko te da la corona del museo. 👑" : " · Vuelve a las salas y escucha las audioguías para completar el recorrido."); }
+  else { s.textContent = "Llevas "+right+" correcta(s) de "+done+" respondida(s)."; }
+}
+
+/* ============ DESCARGA ============ */
+function downloadFichas(){
+  var m = current, out = m.title.toUpperCase()+"\n"+m.subtitle+"\n\nGuía: Canon Iko · MUDELAR, Museo de las Realidades (MuseOS)\n\n"+m.intro+"\n";
+  m.rooms.forEach(function(r,i){ out += "\n—— SALA "+(i+1)+": "+r.name+" ——\nPieza: "+r.obj+"\nÉpoca: "+r.period+"\nLugar: "+r.place+"\nQué es: "+r.what+"\nPor qué importa: "+r.why+"\nCómo se usaba: "+r.how+"\nDato curioso: "+r.cur+"\nAudioguía: "+r.audio+"\n"; });
+  out += "\n—— CÁPSULA DE TIEMPO ——\n"+m.capsule.obj+"\nÉpoca: "+m.capsule.era+" · Lugar: "+m.capsule.place+"\nEl momento: "+m.capsule.moment+"\n"+m.capsule.text+"\n";
+  out += "\n—— LÍNEA DE TIEMPO ——\n"+ m.timeline.map(function(t){return t.y+" · "+t.t+": "+t.d;}).join("\n") + "\n";
+  var blob = new Blob([out], {type:"text/plain;charset=utf-8"});
+  var a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+  a.download = m.title.toLowerCase().replace(/[^a-záéíóúñ0-9]+/gi,"-") + "-fichas.txt";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 2000);
+  toast("⬇ Fichas descargadas: llévalas contigo fuera del museo.");
+}
+
+/* ============ CREAR ============ */
+function normalize(s){ return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,""); }
+function findMuseum(raw){
+  var n = normalize(raw);
+  if(n.indexOf("queen")>-1) return MUSEUMS.queen;
+  if(n.indexOf("frida")>-1 || n.indexOf("kahlo")>-1) return MUSEUMS.frida;
+  if(n.indexOf("luna")>-1 || n.indexOf("apolo")>-1 || n.indexOf("apollo")>-1 || n.indexOf("armstrong")>-1) return MUSEUMS.luna;
+  return buildGeneric(raw);
+}
+document.getElementById("createForm").addEventListener("submit", function(ev){
+  ev.preventDefault();
+  var val = document.getElementById("topic").value.trim();
+  if(!val){ statusEl.textContent = "Escribe primero un tema, por ejemplo: Quiero un museo de Queen."; return; }
+  stopVoice();
+  statusEl.textContent = "⏳ Canon Iko está armando tu museo…";
+  setTimeout(function(){
+    var m = findMuseum(val);
+    renderMuseum(m);
+    statusEl.textContent = "✅ Museo creado: «"+m.title+"». Baja para entrar a la primera sala.";
+    document.getElementById("museum").scrollIntoView({behavior:"smooth", block:"start"});
+  }, 450);
+});
+document.querySelectorAll(".chip").forEach(function(ch){
+  ch.addEventListener("click", function(){
+    document.getElementById("topic").value = "Quiero un museo de " + ch.getAttribute("data-topic");
+    document.getElementById("createForm").dispatchEvent(new Event("submit", {cancelable:true}));
+  });
+});
+
+/* ============ TOAST ============ */
+var toastTimer = null;
+function toast(msg){
+  var t = document.getElementById("toast"); t.textContent = msg; t.classList.add("show");
+  clearTimeout(toastTimer); toastTimer = setTimeout(function(){ t.classList.remove("show"); }, 3400);
+}
+
+/* Museo inicial: el ejemplo que pediste, Queen */
+renderMuseum(MUSEUMS.queen);
+</script>
+</body>
+</html>
